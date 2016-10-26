@@ -5,9 +5,8 @@
   "main": "dist/bundle.js",
   "jsnext:main": "dist/bundle.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c && npm run build-test",
-    "build-test": "cd test && rollup --config rollup.test.config.js"
+    "build-test": "cd test && rollup --config rollup.test.config.js",
+    "build": "rollup -c"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com>",
   "license": "WTFPL",
@@ -16,8 +15,7 @@
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "tape": "^4.6.2",
-    "testling": "^1.7.1"
+    "tape": "^4.6.2"
   },
   "dependencies": {
     "iselement": "^1.1.4"

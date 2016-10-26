@@ -26,7 +26,7 @@ export function resolveElement(element){
     return element;
 }
 
-export function domListOf(arr){
+function domListOf(arr){
 
     if(!arr) return [];
 
@@ -51,6 +51,14 @@ export function domListOf(arr){
 
 }
 
+export function initElementList(arr, context){
+    let list = domListOf(arr);
+    if(context){
+        context.elements = list;
+    }
+    return list;
+}
+
 function addElements(elements, ...toAdd){
     return toAdd.map(resolveElement).forEach(e=>{
         let index = indexOfElement(elements, e);
@@ -71,20 +79,20 @@ function removeElements(elements, ...toRemove){
     }, []);
 }
 
-export function createAdder(elements){
+export function createAddMethod(){
     return function add(...toAdd){
         try{
-            addElements(elements, ...toAdd);
+            addElements(this.elements, ...toAdd);
         }catch(e){ throw e; }
 
         return this;
     };
 }
 
-export function createRemover(elements){
+export function createRemoveMethod(){
     return function remove(...toRemove){
         try{
-            return removeElements(elements, ...toRemove);
+            return removeElements(this.elements, ...toRemove);
         }catch(e){ throw e; }
     };
 }

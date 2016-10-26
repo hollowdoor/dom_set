@@ -54,6 +54,14 @@ function domListOf(arr) {
     }
 }
 
+function initElementList(arr, context) {
+    var list = domListOf(arr);
+    if (context) {
+        context.elements = list;
+    }
+    return list;
+}
+
 function addElements(elements) {
     for (var _len = arguments.length, toAdd = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         toAdd[_key - 1] = arguments[_key];
@@ -80,14 +88,14 @@ function removeElements(elements) {
     }, []);
 }
 
-function createAdder(elements) {
+function createAddMethod() {
     return function add() {
         try {
             for (var _len3 = arguments.length, toAdd = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
                 toAdd[_key3] = arguments[_key3];
             }
 
-            addElements.apply(undefined, [elements].concat(toAdd));
+            addElements.apply(undefined, [this.elements].concat(toAdd));
         } catch (e) {
             throw e;
         }
@@ -96,14 +104,14 @@ function createAdder(elements) {
     };
 }
 
-function createRemover(elements) {
+function createRemoveMethod() {
     return function remove() {
         try {
             for (var _len4 = arguments.length, toRemove = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
                 toRemove[_key4] = arguments[_key4];
             }
 
-            return removeElements.apply(undefined, [elements].concat(toRemove));
+            return removeElements.apply(undefined, [this.elements].concat(toRemove));
         } catch (e) {
             throw e;
         }
@@ -112,7 +120,7 @@ function createRemover(elements) {
 
 exports.indexOfElement = indexOfElement;
 exports.resolveElement = resolveElement;
-exports.domListOf = domListOf;
-exports.createAdder = createAdder;
-exports.createRemover = createRemover;
+exports.initElementList = initElementList;
+exports.createAddMethod = createAddMethod;
+exports.createRemoveMethod = createRemoveMethod;
 //# sourceMappingURL=bundle.js.map

@@ -15,14 +15,31 @@ There actually aren't any dom operations being done by this library. Only array 
 Usage
 -----
 
+```html
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+    <p class="thing1"></p>
+    <p class="thing2"></p>
+    <p class="thing3"></p>
+
+    <script src="code.js"></script>
+</body>
+</html>
+```
+
+**code.js** precompiled.
+
 ```javascript
 import {domListOf, createAdder, createRemover} from 'dom-indexers';
 
 function myOperator(elements){
-    elements = domListOf(elements); //An array of elements, or an element
-    this.add = createAdder(elements);
-    this.remove = createRemover(elements);
+    initElementList(elements, this);
 }
+
+myOperator.prototype.add = createAddMethod();
+myOperator.prototype.remove = createRemoveMethod();
 //All operations can take elements, or selectors.
 const things = [document.querySelector('.thing1'), '.thing2'];
 const myOps = myOperator(things);
@@ -34,13 +51,23 @@ myOps.remove('.thing1');
 Available imports
 -----------------
 
-### domListOf(items|item)
+### initElementList(items|item, context) -> elements
+
+Adds an `elements` property to `context` to be used by other methods created by this library.
 
 ```javascript
-import {domListOf} from 'dom-indexers';
+import {initElementList} from 'dom-indexers';
 ```
 
 `items` should be an array of elements, or `item` should be an element.
+
+`items`, or `item` can be DOM elements, or element selectors.
+
+`context` should be the constructed object you want to apply the list to.
+
+Unlike libraries like jQuery the elements in the list are not at all related.
+
+If you use a selector then `document.querySelector` is called to you only get the first element from a group of objects.
 
 ### indexOfElement(elements, element)
 
@@ -50,10 +77,10 @@ import {indexOfElement} from 'dom-indexers';
 
 Find the index of `element` in `elements`.
 
-### createAdder(elements) -> add(...items)
+### createAddMethod() -> add(...items)
 
 ```javascript
-import {createAdder} from 'dom-indexers';
+import {createAddMethod} from 'dom-indexers';
 ```
 
 Get a function that will add `items` to `elements`.
@@ -62,10 +89,10 @@ If any of the `items` are already in `elements` then the `add` function won't ad
 
 If the `add` function is assigned to an object when `add` is called it will return that object's `this` variable.
 
-### createRemover(elements) -> remove(...items)
+### createRemoveMethod() -> remove(...items)
 
 ```javascript
-import {createRemover} from 'dom-indexers';
+import {createRemoveMethod} from 'dom-indexers';
 ```
 
 Get a function that will remove `items` from `elements`.
