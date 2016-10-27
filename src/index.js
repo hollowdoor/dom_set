@@ -1,98 +1,113 @@
-import isElement from 'iselement';
+import {
+    indexOfElement,
+    hasElement,
+    domListOf,
+    concatElementLists,
+    addElements,
+    removeElements,
+    resolveElement
+} from './lib/operations';
 
-export function indexOfElement(elements, element){
-    if(!isElement(element)) return -1;
-    for(let i=0; i<elements.length; i++){
-        if(elements[i] === element){
-            return i;
+import {createPrivates, arrayFrom, internalIsNaN} from './lib/utils';
+
+const privates = createPrivates();
+const _=inst=>privates.get(inst);
+
+export function initDomFamily(context, arr){
+    const list = domListOf(arr);
+
+    privates.set(context, {
+        elements: list
+    })
+
+    Object.defineProperty(context, 'size', {
+        get: function(){
+            return _(context).elements.length;
         }
-    }
-    return -1;
-}
+    });
 
-export function resolveElement(element){
-    if(typeof element === 'string'){
-        try{
-            return document.querySelector(element);
-        }catch(e){
-            throw e;
-        }
+    context[Symbol ? Symbol.iterator : '@@iterator'] = function(){
+        let index = -1;
+        return {
+            next(){
+                if(++index === context.size){
+                    return {done: true};
+                }
 
-    }
-
-    if(!isElement(element)){
-        throw new TypeError(`${element} is not a DOM element.`);
-    }
-    return element;
-}
-
-function domListOf(arr){
-
-    if(!arr) return [];
-
-    try{
-        if(Object.prototype.toString(arr) === '[object Array]'){
-            return arr.map(resolveElement);
-        }else{
-            if(typeof arr.length === 'undefined'){
-                return resolveElement(arr);
+                return {done: false, value: _(context).elements[index]};
             }
-            let arrayFrom = Array.from;
-            if(typeof arrayFrom === 'function'){
-                return Array.from(arr, resolveElement);
-            }else{
-                return Array.prototype.slice.call(arr).map(resolveElement);
-            }
+        };
+    };
 
-        }
-    }catch(e){
-        throw new Error(e);
-    }
-
+    return arrayFrom(list);
 }
 
-export function initElementList(arr, context){
-    let list = domListOf(arr);
-    if(context){
-        context.elements = list;
+export function domFamilyMixin(proto){
+
+    proto.add = addMethod;
+    //Like delete
+    proto.remove = removeMethod;
+    //Special methods
+    promto.removeAll = removeAllMethod;
+    proto.indexOf = indexOfMethod;
+    proto.get = getMethod;
+    //Normal Set like operations
+    proto.values = valuesMethod;
+    proto.has = hasMethod;
+    proto.forEach = forEachMethod;
+    proto.delete = removeMethod;
+    proto.clear = removeAllMethod;
+
+    return proto;
+}
+
+export function getMethod(index){
+    if(internalIsNaN(index)){
+        return arrayFrom(_(this).elements);
     }
+
+    return _(this).elements[parseInt(index)];
+}
+
+export function valuesMethod(){
+    return arrayFrom(_(this).elements);
+}
+
+export function indexOfMethod(element){
+    return indexOfElement(_(this).elements, element);
+}
+
+export function hasMethod(element){
+    return hasElement(_(this).elements, element);
+}
+
+export function addMethod(...toAdd){
+    addElements(_(this).elements, ...toAdd);
+    return this;
+}
+
+export function removeMethod(...toRemove){
+    return removeElements(_(this).elements, ...toRemove);
+}
+
+export function removeAllMethod(){
+    let list = [];
+    let elements = _(this).elements;
+
+    if(!elements.length){
+        return list;
+    }
+
+    list = arrayFrom(elements);
+
+    _(this).elements = [];
+
     return list;
 }
 
-function addElements(elements, ...toAdd){
-    return toAdd.map(resolveElement).forEach(e=>{
-        let index = indexOfElement(elements, e);
-
-        if(index === -1)
-            elements.push(e);
-    });
+export function forEachMethod(cb, context){
+    return _(this).elements.forEach(cb, context || this);
 }
 
-function removeElements(elements, ...toRemove){
-    return toRemove.map(resolveElement).reduce((last, e)=>{
 
-        let index = indexOfElement(elements, e);
-
-        if(index !== -1)
-            return last.concat(elements.splice(index, 1));
-        return last;
-    }, []);
-}
-
-export function createAddMethod(){
-    return function add(...toAdd){
-        try{
-            addElements(this.elements, ...toAdd);
-        }catch(e){ throw e; }
-
-        return this;
-    };
-}
-
-export function createRemoveMethod(){
-    return function remove(...toRemove){
-        try{
-            return removeElements(this.elements, ...toRemove);
-        }catch(e){ throw e; }
-    };
-}
+export * from './lib/operations';

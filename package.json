@@ -18,6 +18,7 @@
     "tape": "^4.6.2"
   },
   "dependencies": {
-    "iselement": "^1.1.4"
+    "iselement": "^1.1.4",
+    "weakmap": "0.0.6"
   }
 }
