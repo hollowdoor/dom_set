@@ -21,7 +21,9 @@ export function domListOf(arr){
     if(!arr) return [];
 
     try{
-        if(Object.prototype.toString(arr) === '[object Array]'){
+        if(typeof arr === 'string'){
+            return Array.prototype.slice.call(document.querySelectorAll(arr));
+        }else if(Object.prototype.toString(arr) === '[object Array]'){
             return arr.map(resolveElement);
         }else{
             if(typeof arr.length === 'undefined'){

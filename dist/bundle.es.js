@@ -1,29 +1,6 @@
 import isElement from 'iselement';
-import { WeakMap } from 'weakmap';
-
-function createPrivates() {
-    return new WeakMap();
-}
-
-var arrayFrom = function () {
-    if (Array.from) {
-        return Array.from;
-    }
-    return function (a, mapper, thisArg) {
-        if (typeof mapper === 'function') {
-            return Array.prototype.slice.call(a).map(mapper, thisArg);
-        } else {
-            return Array.prototype.slice.call(a);
-        }
-    };
-}();
-
-//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN
-var internalIsNaN = function () {
-    return Number.isNaN ? Number.isNaN : function (value) {
-        return value !== value;
-    };
-}();
+import arrayFrom from 'array-from';
+import isArray from 'is-array';
 
 function indexOfElement(elements, element) {
     element = resolveElement(element, true);
@@ -45,7 +22,9 @@ function domListOf(arr) {
     if (!arr) return [];
 
     try {
-        if (Object.prototype.toString(arr) === '[object Array]') {
+        if (typeof arr === 'string') {
+            return arrayFrom(document.querySelectorAll(arr));
+        } else if (isArray(arr)) {
             return arr.map(resolveElement);
         } else {
             if (typeof arr.length === 'undefined') {
@@ -53,12 +32,6 @@ function domListOf(arr) {
             }
 
             return arrayFrom(arr, resolveElement);
-            /*let arrayFrom = Array.from;
-            if(typeof arrayFrom === 'function'){
-                return Array.from(arr, resolveElement);
-            }else{
-                return Array.prototype.slice.call(arr).map(resolveElement);
-            }*/
         }
     } catch (e) {
         throw new Error(e);
@@ -75,16 +48,22 @@ function concatElementLists() {
     }, []);
 }
 
+function pushElements(elements, toAdd) {
+
+    for (var i = 0; i < toAdd.length; i++) {
+        if (!hasElement(elements, toAdd[i])) elements.push(toAdd[i]);
+    }
+
+    return toAdd;
+}
+
 function addElements(elements) {
     for (var _len2 = arguments.length, toAdd = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         toAdd[_key2 - 1] = arguments[_key2];
     }
 
-    return toAdd.map(resolveElement).forEach(function (e) {
-        var index = indexOfElement(elements, e);
-
-        if (index === -1) elements.push(e);
-    });
+    toAdd = toAdd.map(resolveElement);
+    return pushElements(elements, toAdd);
 }
 
 function removeElements(elements) {
@@ -116,114 +95,5 @@ function resolveElement(element, noThrow) {
     return element;
 }
 
-var privates = createPrivates();
-var _ = function _(inst) {
-    return privates.get(inst);
-};
-
-function initDomFamily(context, arr) {
-    var list = domListOf(arr);
-
-    privates.set(context, {
-        elements: list
-    });
-
-    Object.defineProperty(context, 'size', {
-        get: function get() {
-            return _(context).elements.length;
-        }
-    });
-
-    context[Symbol ? Symbol.iterator : '@@iterator'] = function () {
-        var index = -1;
-        return {
-            next: function next() {
-                if (++index === context.size) {
-                    return { done: true };
-                }
-
-                return { done: false, value: _(context).elements[index] };
-            }
-        };
-    };
-
-    return arrayFrom(list);
-}
-
-function domFamilyMixin(proto) {
-
-    proto.add = addMethod;
-    //Like delete
-    proto.remove = removeMethod;
-    //Special methods
-    promto.removeAll = removeAllMethod;
-    proto.indexOf = indexOfMethod;
-    proto.get = getMethod;
-    //Normal Set like operations
-    proto.values = valuesMethod;
-    proto.has = hasMethod;
-    proto.forEach = forEachMethod;
-    proto.delete = removeMethod;
-    proto.clear = removeAllMethod;
-
-    return proto;
-}
-
-function getMethod(index) {
-    if (internalIsNaN(index)) {
-        return arrayFrom(_(this).elements);
-    }
-
-    return _(this).elements[parseInt(index)];
-}
-
-function valuesMethod() {
-    return arrayFrom(_(this).elements);
-}
-
-function indexOfMethod(element) {
-    return indexOfElement(_(this).elements, element);
-}
-
-function hasMethod(element) {
-    return hasElement(_(this).elements, element);
-}
-
-function addMethod() {
-    for (var _len = arguments.length, toAdd = Array(_len), _key = 0; _key < _len; _key++) {
-        toAdd[_key] = arguments[_key];
-    }
-
-    addElements.apply(undefined, [_(this).elements].concat(toAdd));
-    return this;
-}
-
-function removeMethod() {
-    for (var _len2 = arguments.length, toRemove = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        toRemove[_key2] = arguments[_key2];
-    }
-
-    return removeElements.apply(undefined, [_(this).elements].concat(toRemove));
-}
-
-function removeAllMethod() {
-    var list = [];
-    var elements = _(this).elements;
-
-    if (!elements.length) {
-        return list;
-    }
-
-    list = arrayFrom(elements);
-
-    _(this).elements = [];
-
-    return list;
-}
-
-function forEachMethod(cb, context) {
-    return _(this).elements.forEach(cb, context || this);
-}
-
-export { initDomFamily, domFamilyMixin, getMethod, valuesMethod, indexOfMethod, hasMethod, addMethod, removeMethod, removeAllMethod, forEachMethod, indexOfElement, hasElement, domListOf, concatElementLists, addElements, removeElements, resolveElement };
+export { indexOfElement, hasElement, domListOf, concatElementLists, addElements, removeElements, resolveElement };
 //# sourceMappingURL=bundle.es.js.map

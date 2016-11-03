@@ -1,113 +1,89 @@
-import {
-    indexOfElement,
-    hasElement,
-    domListOf,
-    concatElementLists,
-    addElements,
-    removeElements,
-    resolveElement
-} from './lib/operations';
+import isElement from 'iselement';
+import arrayFrom from 'array-from';
+import isArray from 'is-array';
 
-import {createPrivates, arrayFrom, internalIsNaN} from './lib/utils';
-
-const privates = createPrivates();
-const _=inst=>privates.get(inst);
-
-export function initDomFamily(context, arr){
-    const list = domListOf(arr);
-
-    privates.set(context, {
-        elements: list
-    })
-
-    Object.defineProperty(context, 'size', {
-        get: function(){
-            return _(context).elements.length;
+export function indexOfElement(elements, element){
+    element = resolveElement(element, true);
+    if(!isElement(element)) return -1;
+    for(let i=0; i<elements.length; i++){
+        if(elements[i] === element){
+            return i;
         }
-    });
+    }
+    return -1;
+}
 
-    context[Symbol ? Symbol.iterator : '@@iterator'] = function(){
-        let index = -1;
-        return {
-            next(){
-                if(++index === context.size){
-                    return {done: true};
-                }
+export function hasElement(elements, element){
+    return -1 !== indexOfElement(elements, element);
+}
 
-                return {done: false, value: _(context).elements[index]};
+export function domListOf(arr){
+
+    if(!arr) return [];
+
+    try{
+        if(typeof arr === 'string'){
+            return arrayFrom(document.querySelectorAll(arr));
+        }else if(isArray(arr)){
+            return arr.map(resolveElement);
+        }else{
+            if(typeof arr.length === 'undefined'){
+                return [resolveElement(arr)];
             }
-        };
-    };
 
-    return arrayFrom(list);
-}
+            return arrayFrom(arr, resolveElement);
 
-export function domFamilyMixin(proto){
-
-    proto.add = addMethod;
-    //Like delete
-    proto.remove = removeMethod;
-    //Special methods
-    promto.removeAll = removeAllMethod;
-    proto.indexOf = indexOfMethod;
-    proto.get = getMethod;
-    //Normal Set like operations
-    proto.values = valuesMethod;
-    proto.has = hasMethod;
-    proto.forEach = forEachMethod;
-    proto.delete = removeMethod;
-    proto.clear = removeAllMethod;
-
-    return proto;
-}
-
-export function getMethod(index){
-    if(internalIsNaN(index)){
-        return arrayFrom(_(this).elements);
+        }
+    }catch(e){
+        throw new Error(e);
     }
 
-    return _(this).elements[parseInt(index)];
 }
 
-export function valuesMethod(){
-    return arrayFrom(_(this).elements);
+export function concatElementLists(...lists){
+    return lists.reduce((last, list)=>{
+        return list.length ? last : last.concat(domListOf(list));
+    }, []);
 }
 
-export function indexOfMethod(element){
-    return indexOfElement(_(this).elements, element);
-}
-
-export function hasMethod(element){
-    return hasElement(_(this).elements, element);
-}
-
-export function addMethod(...toAdd){
-    addElements(_(this).elements, ...toAdd);
-    return this;
-}
-
-export function removeMethod(...toRemove){
-    return removeElements(_(this).elements, ...toRemove);
-}
-
-export function removeAllMethod(){
-    let list = [];
-    let elements = _(this).elements;
-
-    if(!elements.length){
-        return list;
+function pushElements(elements, toAdd){
+    
+    for(let i=0; i<toAdd.length; i++){
+        if(!hasElement(elements, toAdd[i]))
+            elements.push(toAdd[i]);
     }
 
-    list = arrayFrom(elements);
-
-    _(this).elements = [];
-
-    return list;
+    return toAdd;
 }
 
-export function forEachMethod(cb, context){
-    return _(this).elements.forEach(cb, context || this);
+export function addElements(elements, ...toAdd){
+    toAdd = toAdd.map(resolveElement);
+    return pushElements(elements, toAdd);
 }
 
+export function removeElements(elements, ...toRemove){
+    return toRemove.map(resolveElement).reduce((last, e)=>{
 
-export * from './lib/operations';
+        let index = indexOfElement(elements, e);
+
+        if(index !== -1)
+            return last.concat(elements.splice(index, 1));
+        return last;
+    }, []);
+}
+
+export function resolveElement(element, noThrow){
+    if(typeof element === 'string'){
+        try{
+            return document.querySelector(element);
+        }catch(e){
+            throw e;
+        }
+
+    }
+
+    if(!isElement(element) && !noThrow){
+        throw new TypeError(`${element} is not a DOM element.`);
+    }
+    return element;
+}

@@ -32,17 +32,22 @@ Usage
 **code.js** precompiled.
 
 ```javascript
-import {domListOf, createAdder, createRemover} from 'dom-indexers';
+import {domListOf, addElements, removeElements} from 'dom-indexers';
 
-function myOperator(elements){
-    initElementList(elements, this);
+function MyOperator(elements){
+    this.elements = domListOf(elements);
 }
 
-myOperator.prototype.add = createAddMethod();
-myOperator.prototype.remove = createRemoveMethod();
+MyOperator.prototype.add = function(elements){
+    addElements(this.elements, elements);
+    return this;
+};
+MyOperator.prototype.remove = function(elements){
+    return removeElements(this.elements, elements);
+};
 //All operations can take elements, or selectors.
 const things = [document.querySelector('.thing1'), '.thing2'];
-const myOps = myOperator(things);
+const myOps = MyOperator(things);
 myOps.add(document.querySelector('.thing3'));
 myOps.remove('.thing1');
 
@@ -51,89 +56,44 @@ myOps.remove('.thing1');
 Available imports
 -----------------
 
-### initElementList(items|item, context) -> elements
+-	indexOfElement(array, element)
+-	hasElement(array, element)
+-	domListOf(array)
+-	addElements(array, ...elements)
+-	removeElements(array, ...elements)
 
-Adds an `elements` property to `context` to be used by other methods created by this library.
+The first argument of `array` should be the javascript array that contains the elements you want to operate on.
 
-```javascript
-import {initElementList} from 'dom-indexers';
-```
+In this documentation any where you see the words **element**, **convertible**, or **convertible value** this means the value is one of these types:
 
-`items` should be an array of elements, or `item` should be an element.
+-	CSS DOM selector
+-	DOM element
 
-`items`, or `item` can be DOM elements, or element selectors.
+### indexOfElement(array, element) -> Integer
 
-`context` should be the constructed object you want to apply the list to.
+Find the index of element in the array. `indexOfElement` returns `-1` if the element is not in `array`. `element` is a convertible.
 
-Unlike libraries like jQuery the elements in the list are not at all related.
+### hasElement(array, element) -> Boolean
 
-If you use a selector then `document.querySelector` is called to you only get the first element from a group of objects.
+Check if `array` contains `element`.
 
-### indexOfElement(elements, element)
+### domListOf(array|string) -> Array
 
-```javascript
-import {indexOfElement} from 'dom-indexers';
-```
+Create an Array of elements from another array, or array like list.
 
-Find the index of `element` in `elements`.
+The array values can be convertible values.
 
-### createAddMethod() -> add(...items)
+The string value must be a CSS selector.
 
-```javascript
-import {createAddMethod} from 'dom-indexers';
-```
+### addElements(array, ...elements) -> added
 
-Get a function that will add `items` to `elements`.
+Add elements to an array of elements. `elements` can be convertible values.
 
-If any of the `items` are already in `elements` then the `add` function won't add them.
+### removeElements(array, ...elements) -> removed
 
-If the `add` function is assigned to an object when `add` is called it will return that object's `this` variable.
+Remove elements from the array of elements. `elements` can be convertible values.
 
-### createRemoveMethod() -> remove(...items)
+About
+-----
 
-```javascript
-import {createRemoveMethod} from 'dom-indexers';
-```
-
-Get a function that will remove `items` from `elements`.
-
-The `remove` function returns an array of any removed elements if they were in `elements`.
-
-Philosophy?
------------
-
-Essentially the functions exported from this library are decorators for an array of elements.
-
-These operations are so common in libraries I figured why not make them once.
-
-Another reason is compatibility. Many libraries that use collections of elements can have compatible interfaces. At least internally.
-
-If you use rollup with rollup's tree shaking libraries can import just one, or any of these functions without bloat.
-
-A Story
--------
-
-Suppose this library is wildly successful. :)
-
-Now suppose 20 composable DOM libraries use 2 of the same functions from this library.
-
-You use rollup to compile your project using these 20 libraries. Now you have 20 libraries in your build with 2 extra functions shared with all 20 libraries.
-
-That's what is possible with tree shaking.
-
-As an aside that beast webpack will also have tree shaking. So there's that too.
-
-Projects using dom-indexers
----------------------------
-
-Nothing here yet.
-
-Help this library
------------------
-
-Before you fork, and make any pull requests to add to this repo post an issue first.
-
-1.	Leave an issue for any functions you would like to see added to this library.
-2.	Make a pull request with a new function.
-3.	If you have used this library in another library you can leave a notice in your own docs notifying compatibility with this one.
-4.	Fork this and add your library to the list of projects using this one.
+These functions aren't meant to manipulate the DOM. They're only purpose is to manage a list of DOM elements.

@@ -1,12 +1,12 @@
 {
-  "name": "dom-indexers",
+  "name": "dom-set",
   "version": "1.0.0",
   "description": "Create functions for operating on a list of DOM elements",
   "main": "dist/bundle.js",
   "jsnext:main": "dist/bundle.es.js",
   "scripts": {
     "build-test": "cd test && rollup --config rollup.test.config.js",
-    "build": "rollup -c"
+    "build": "node ./rollit"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com>",
   "license": "WTFPL",
@@ -15,10 +15,13 @@
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "tape": "^4.6.2"
+    "rollup-plugin-uglify": "^1.0.1",
+    "tape": "^4.6.2",
+    "uglify-js": "^2.7.4"
   },
   "dependencies": {
-    "iselement": "^1.1.4",
-    "weakmap": "0.0.6"
+    "array-from": "^2.1.1",
+    "is-array": "^1.0.1",
+    "iselement": "^1.1.4"
   }
 }

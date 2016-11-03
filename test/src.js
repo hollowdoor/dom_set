@@ -1,21 +1,20 @@
-import {initDomFamily, domFamilyMixin} from '../';
+import {domListOf, addElements, removeElements} from '../';
 
-
-function myLib(elements){
-    initDomFamily(this, elements);
+function MyOperator(elements){
+    this.elements = domListOf(elements);
 }
 
-domFamilyMixin(myLib.prototype);
-
-let obj = new myLib();
-
-let thing1 = document.querySelector('.thing1');
-let thing2 = document.querySelector('.thing2');
-
-obj.add(thing1);
-obj.add(thing2);
-console.log(obj.has(thing1))
-console.log(obj.has(thing2))
-obj.remove(thing1);
-console.log(obj.has(thing1))
-console.log(obj.has(thing2))
+MyOperator.prototype.add = function(elements){
+    addElements(this.elements, elements);
+    return this;
+};
+MyOperator.prototype.remove = function(elements){
+    return removeElements(this.elements, elements);
+};
+//All operations can take elements, or selectors.
+const things = [document.querySelector('.thing1'), '.thing2'];
+const myOps = new MyOperator(things);
+myOps.add(document.querySelector('.thing3'));
+console.log(myOps.elements)
+myOps.remove('.thing1');
+console.log(myOps.elements)
