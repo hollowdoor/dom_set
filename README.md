@@ -8,7 +8,7 @@ The Explanation
 
 This library is best used with [rollup](https://github.com/rollup/rollup).
 
-`dom-indexers` is a collection of functions to extend other libraries that export instances of objects that have their own DOM operations.
+`dom-set` is a collection of functions to extend other libraries that export instances of objects that have their own DOM operations.
 
 There actually aren't any dom operations being done by this library. Only array collection operations that are meant for an array of DOM elements.
 
@@ -32,7 +32,7 @@ Usage
 **code.js** precompiled.
 
 ```javascript
-import {domListOf, addElements, removeElements} from 'dom-indexers';
+import {domListOf, addElements, removeElements} from 'dom-set';
 
 function MyOperator(elements){
     this.elements = domListOf(elements);
