@@ -53,8 +53,21 @@ myOps.remove('.thing1');
 
 ```
 
-Available imports
------------------
+Selector imports
+----------------
+
+### select(selector|element)
+
+Select an element with `selector`, or just return `element`.
+
+### selectAll(selector|array)
+
+Select all elements using `selector`, select one element for each selector in `array`.
+
+If `array` has any elements in it those get returned unmodified.
+
+List imports
+------------
 
 -	indexOfElement(array, element)
 -	hasElement(array, element)

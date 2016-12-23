@@ -1,4 +1,13 @@
-import {domListOf, addElements, removeElements} from '../';
+import {
+    domListOf,
+    addElements,
+    removeElements,
+    select,
+    selectAll
+} from '../';
+
+console.log(select('body'));
+console.log(selectAll('p'));
 
 function MyOperator(elements){
     this.elements = domListOf(elements);

@@ -8,6 +8,30 @@ var isElement = _interopDefault(require('iselement'));
 var arrayFrom = _interopDefault(require('array-from'));
 var isArray = _interopDefault(require('is-array'));
 
+function select(selector){
+    if(typeof selector === 'string'){
+        try{
+            return document.querySelector(selector);
+        }catch(e){
+            throw e;
+        }
+    }else if(isElement(selector)){
+        return selector;
+    }
+}
+
+function selectAll(selector){
+    if(typeof selector === 'string'){
+        return Array.prototype.slice.apply(
+            document.querySelectorAll(selector)
+        );
+    }else if(isArray(selector)){
+        return selector.map(select);
+    }else if('length' in selector){
+        return arrayFrom(selector).map(select);
+    }
+}
+
 function indexOfElement(elements, element){
     element = resolveElement(element, true);
     if(!isElement(element)) { return -1; }
@@ -56,7 +80,7 @@ function concatElementLists(){
 }
 
 function pushElements(elements, toAdd){
-    
+
     for(var i=0; i<toAdd.length; i++){
         if(!hasElement(elements, toAdd[i]))
             { elements.push(toAdd[i]); }
@@ -110,4 +134,6 @@ exports.concatElementLists = concatElementLists;
 exports.addElements = addElements;
 exports.removeElements = removeElements;
 exports.resolveElement = resolveElement;
+exports.select = select;
+exports.selectAll = selectAll;
 //# sourceMappingURL=bundle.js.map

@@ -274,7 +274,7 @@ var index$4 = isArray || function (val) {
 
 var require$$2 = ( index$1 && index$1['default'] ) || index$1;
 
-var bundle = createCommonjsModule(function (module, exports) {
+var bundle$1 = createCommonjsModule(function (module, exports) {
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -284,6 +284,30 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var isElement = _interopDefault(require$$2);
 var arrayFrom = _interopDefault(index$2);
 var isArray = _interopDefault(index$4);
+
+function select(selector){
+    if(typeof selector === 'string'){
+        try{
+            return document.querySelector(selector);
+        }catch(e){
+            throw e;
+        }
+    }else if(isElement(selector)){
+        return selector;
+    }
+}
+
+function selectAll(selector){
+    if(typeof selector === 'string'){
+        return Array.prototype.slice.apply(
+            document.querySelectorAll(selector)
+        );
+    }else if(isArray(selector)){
+        return selector.map(select);
+    }else if('length' in selector){
+        return arrayFrom(selector).map(select);
+    }
+}
 
 function indexOfElement(elements, element){
     element = resolveElement(element, true);
@@ -335,7 +359,7 @@ function concatElementLists(){
 }
 
 function pushElements(elements, toAdd){
-    
+
     for(var i=0; i<toAdd.length; i++){
         if(!hasElement(elements, toAdd[i]))
             { elements.push(toAdd[i]); }
@@ -393,13 +417,20 @@ exports.concatElementLists = concatElementLists;
 exports.addElements = addElements;
 exports.removeElements = removeElements;
 exports.resolveElement = resolveElement;
+exports.select = select;
+exports.selectAll = selectAll;
 });
 
+var selectAll = bundle$1.selectAll;
+var select = bundle$1.select;
 
-var removeElements = bundle.removeElements;
-var addElements = bundle.addElements;
+var removeElements = bundle$1.removeElements;
+var addElements = bundle$1.addElements;
 
-var domListOf = bundle.domListOf;
+var domListOf = bundle$1.domListOf;
+
+console.log(select('body'));
+console.log(selectAll('p'));
 
 function MyOperator(elements){
     this.elements = domListOf(elements);

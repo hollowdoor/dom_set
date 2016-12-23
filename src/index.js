@@ -1,6 +1,9 @@
 import isElement from 'iselement';
 import arrayFrom from 'array-from';
 import isArray from 'is-array';
+export { select, selectAll } from './lib/select.js';
+
+
 
 export function indexOfElement(elements, element){
     element = resolveElement(element, true);
@@ -47,7 +50,7 @@ export function concatElementLists(...lists){
 }
 
 function pushElements(elements, toAdd){
-    
+
     for(let i=0; i<toAdd.length; i++){
         if(!hasElement(elements, toAdd[i]))
             elements.push(toAdd[i]);
