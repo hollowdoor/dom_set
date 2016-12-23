@@ -1,8 +1,8 @@
 "use strict";
 //import babel from 'rollup-plugin-babel';
-const babel = require('rollup-plugin-babel');
+//const babel = require('rollup-plugin-babel');
 const rollup = require('rollup');
-const uglify = require('rollup-plugin-uglify');
+const buble = require('rollup-plugin-buble');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const writeFile = require('fs').writeFile;
@@ -12,7 +12,7 @@ const external = Object.keys(pack.dependencies || {});
 
 rollup.rollup({
     entry: 'src/index.js',
-    plugins: [babel()],
+    plugins: [buble()],
     external: external
 }).then((bundle)=>{
     bundle.write({
@@ -34,12 +34,12 @@ rollup.rollup({
 rollup.rollup({
     entry: 'src/index.js',
     plugins: [
-        babel(),
         nodeResolve({
             jsnext: true,
             main: true
         }),
-        commonjs()
+        commonjs(),
+        buble()
     ],
 }).then((bundle)=>{
     let b = bundle.write({
@@ -65,11 +65,11 @@ rollup.rollup({
 rollup.rollup({
     entry: 'test/src.js',
     plugins: [
-        babel(),
         nodeResolve({
             main: true
         }),
-        commonjs()
+        commonjs(),
+        buble()
     ]
 }).then(bundle=>{
     //console.log('what')
