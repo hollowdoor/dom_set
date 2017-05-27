@@ -264,6 +264,18 @@ var index$1 = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
+var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+/**
+ * Returns `true` if provided input is Element.
+ * @name isElement
+ * @param {*} [input]
+ * @returns {boolean}
+ */
+var isElement$1 = function (input) {
+  return input != null && (typeof input === 'undefined' ? 'undefined' : _typeof$1(input)) === 'object' && input.nodeType === 1 && _typeof$1(input.style) === 'object' && _typeof$1(input.ownerDocument) === 'object';
+};
+
 function select(selector){
     if(typeof selector === 'string'){
         try{
@@ -271,7 +283,7 @@ function select(selector){
         }catch(e){
             throw e;
         }
-    }else if(isElement(selector)){
+    }else if(isElement$1(selector)){
         return selector;
     }
 }

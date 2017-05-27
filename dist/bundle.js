@@ -4,9 +4,21 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var isElement = _interopDefault(require('iselement'));
 var arrayFrom = _interopDefault(require('array-from'));
 var isArray = _interopDefault(require('is-array'));
+var isElement = _interopDefault(require('iselement'));
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+/**
+ * Returns `true` if provided input is Element.
+ * @name isElement
+ * @param {*} [input]
+ * @returns {boolean}
+ */
+var isElement$1 = function (input) {
+  return input != null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.nodeType === 1 && _typeof(input.style) === 'object' && _typeof(input.ownerDocument) === 'object';
+};
 
 function select(selector){
     if(typeof selector === 'string'){
@@ -34,7 +46,7 @@ function selectAll(selector){
 
 function indexOfElement(elements, element){
     element = resolveElement(element, true);
-    if(!isElement(element)) { return -1; }
+    if(!isElement$1(element)) { return -1; }
     for(var i=0; i<elements.length; i++){
         if(elements[i] === element){
             return i;
@@ -121,7 +133,7 @@ function resolveElement(element, noThrow){
 
     }
 
-    if(!isElement(element) && !noThrow){
+    if(!isElement$1(element) && !noThrow){
         throw new TypeError((element + " is not a DOM element."));
     }
     return element;

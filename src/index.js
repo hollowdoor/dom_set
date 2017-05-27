@@ -1,4 +1,4 @@
-import isElement from 'iselement';
+import isElement from './lib/is_element.js';
 import arrayFrom from 'array-from';
 import isArray from 'is-array';
 export { select, selectAll } from './lib/select.js';

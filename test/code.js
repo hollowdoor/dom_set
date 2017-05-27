@@ -5,22 +5,6 @@ function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-/**
- * Returns `true` if provided input is Element.
- * @name isElement
- * @param {*} [input]
- * @returns {boolean}
- */
-var index = function (input) {
-  return input != null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.nodeType === 1 && _typeof(input.style) === 'object' && _typeof(input.ownerDocument) === 'object';
-};
-
-var index$1 = Object.freeze({
-	default: index
-});
-
 // Production steps of ECMA-262, Edition 6, 22.1.2.1
 // Reference: http://www.ecma-international.org/ecma-262/6.0/#sec-array.from
 var polyfill = (function() {
@@ -234,7 +218,7 @@ var polyfill = (function() {
   };
 })();
 
-var index$2 = (typeof Array.from === 'function' ?
+var index = (typeof Array.from === 'function' ?
   Array.from :
   polyfill
 );
@@ -268,11 +252,27 @@ var str = Object.prototype.toString;
  * @return {bool}
  */
 
-var index$4 = isArray || function (val) {
+var index$2 = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-var require$$2 = ( index$1 && index$1['default'] ) || index$1;
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+/**
+ * Returns `true` if provided input is Element.
+ * @name isElement
+ * @param {*} [input]
+ * @returns {boolean}
+ */
+var index$4 = function (input) {
+  return input != null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.nodeType === 1 && _typeof(input.style) === 'object' && _typeof(input.ownerDocument) === 'object';
+};
+
+var index$5 = Object.freeze({
+	default: index$4
+});
+
+var require$$0$1 = ( index$5 && index$4 ) || index$5;
 
 var bundle$1 = createCommonjsModule(function (module, exports) {
 'use strict';
@@ -281,9 +281,21 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var isElement = _interopDefault(require$$2);
-var arrayFrom = _interopDefault(index$2);
-var isArray = _interopDefault(index$4);
+var arrayFrom = _interopDefault(index);
+var isArray = _interopDefault(index$2);
+var isElement = _interopDefault(require$$0$1);
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+/**
+ * Returns `true` if provided input is Element.
+ * @name isElement
+ * @param {*} [input]
+ * @returns {boolean}
+ */
+var isElement$1 = function (input) {
+  return input != null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.nodeType === 1 && _typeof(input.style) === 'object' && _typeof(input.ownerDocument) === 'object';
+};
 
 function select(selector){
     if(typeof selector === 'string'){
@@ -311,7 +323,7 @@ function selectAll(selector){
 
 function indexOfElement(elements, element){
     element = resolveElement(element, true);
-    if(!isElement(element)) { return -1; }
+    if(!isElement$1(element)) { return -1; }
     for(var i=0; i<elements.length; i++){
         if(elements[i] === element){
             return i;
@@ -386,10 +398,10 @@ function removeElements(elements){
 
     return toRemove.map(resolveElement).reduce(function (last, e){
 
-        var index = indexOfElement(elements, e);
+        var index$$1 = indexOfElement(elements, e);
 
-        if(index !== -1)
-            { return last.concat(elements.splice(index, 1)); }
+        if(index$$1 !== -1)
+            { return last.concat(elements.splice(index$$1, 1)); }
         return last;
     }, []);
 }
@@ -404,7 +416,7 @@ function resolveElement(element, noThrow){
 
     }
 
-    if(!isElement(element) && !noThrow){
+    if(!isElement$1(element) && !noThrow){
         throw new TypeError((element + " is not a DOM element."));
     }
     return element;
@@ -419,6 +431,7 @@ exports.removeElements = removeElements;
 exports.resolveElement = resolveElement;
 exports.select = select;
 exports.selectAll = selectAll;
+
 });
 
 var selectAll = bundle$1.selectAll;
