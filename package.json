@@ -8,6 +8,10 @@
     "build-test": "cd test && rollup --config rollup.test.config.js",
     "build": "node ./rollit"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hollowdoor/dom_set.git"
+  },
   "author": "Quentin Engles <hollowdoor99@gmail.com>",
   "license": "WTFPL",
   "devDependencies": {
